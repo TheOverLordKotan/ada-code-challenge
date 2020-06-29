@@ -1,6 +1,25 @@
+# Start with a base image containing Java runtime
 FROM openjdk:8-jdk-alpine
-RUN addgroup -S spring && adduser -S spring -G spring
-USER spring:spring
+
+# Add Maintainer Info
+LABEL maintainer="ada10@ue.edu.co"
+
+# Add a volume pointing to /tmp
+VOLUME /tmp
+
+# Make port 8081 available to the world outside this container
+EXPOSE 8081
+
+# self-explanatory
+WORKDIR /
+
+# The application's jar file
 ARG JAR_FILE=target/*.jar
+
+RUN echo "Oh dang look at that $JAR_FILE"
 COPY ${JAR_FILE} bill-service-1.0.jar
-ENTRYPOINT ["java","-jar","/bill-service-1.0.jar"]
+# Add the application's jar to the container
+ADD ${JAR_FILE} bill-service-1.0.jar
+
+# Run the jar file
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/bill-service-1.0.jar"]
